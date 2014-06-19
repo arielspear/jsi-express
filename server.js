@@ -40,7 +40,10 @@ app.post('/api/people', function(req, res) {
     name: name 
   })
   .save()
-  .then(function() { console.log('Saved person: ' + name);})
+  .then(function(person) { 
+    console.log('Saved person: ' + name);
+    res.json({ person: person });
+  })
   .done();
 });
 
