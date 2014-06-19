@@ -53,10 +53,6 @@ app.put('/api/people/:id', function(req, res) {
     res.json({ person: person });
   })
   .done();
-
-  // var person = people[req.params.id];
-  // person.name = req.body.name;
-  // res.json({ person: person });
 });
 
 app.delete('/api/people/:id', function(req, res) {
