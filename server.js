@@ -44,9 +44,19 @@ app.post('/api/people', function(req, res) {
 });
 
 app.put('/api/people/:id', function(req, res) {
-  var person = people[req.params.id];
-  person.name = req.body.name;
-  res.json({ person: person });
+  Person.where({ id: req.params.id } )
+  .fetch()
+  .then(function(person) {
+    return person.save({ name: req.param('name') }, { patch: true });
+  })
+  .then(function(person) {
+    res.json({ person: person });
+  })
+  .done();
+
+  // var person = people[req.params.id];
+  // person.name = req.body.name;
+  // res.json({ person: person });
 });
 
 app.delete('/api/people/:id', function(req, res) {
