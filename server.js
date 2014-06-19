@@ -31,7 +31,8 @@ app.get('/api/people', function(req, res) {
 
 app.post('/api/people', function(req, res) {
   Person.forge({
-    name: req.param('name') 
+    name: req.param('name'),
+    age : req.param('age')
   })
   .save()
   .then(function(person) { 
@@ -46,7 +47,10 @@ app.put('/api/people/:id', function(req, res) {
     return Person.where({ id: req.params.id } ).fetch();
   })
   .then(function(person) {
-    return person.save({ name: req.param('name') }, { patch: true });
+    return person.save({ 
+      name: req.param('name'),
+      age : req.param('age')
+    });
   })
   .then(function(person) {
     res.json({ person: person });
