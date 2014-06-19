@@ -1,5 +1,10 @@
+var env = process.env.NODE_ENV || 'development';
 var _ = require('lodash');
 var express = require('express');
+var knexConfig = require('./knexfile.js')[env];
+var knex = require('knex')(knexConfig);
+var bookshelf = require('bookshelf')(knex);
+
 var app = express();
 
 app.use(require('morgan')('dev'));
@@ -7,15 +12,11 @@ app.use(require('body-parser')());
 app.use(require('method-override')('_method'));
 app.use(express.static(__dirname + '/public'));
 
+var Person = bookshelf.Model.extend({
+  tableName: 'people'
+});
+
 var people = {};
-var peopleSequence = (function() {
-  var sequence = 1;
-  return function() {
-    var result = sequence;
-    sequence += 1;
-    return result;
-  };
-}());
 
 app.get('/', function(req, res) {
   res.redirect('/home/');
@@ -26,13 +27,13 @@ app.get('/api/people', function(req, res) {
 });
 
 app.post('/api/people', function(req, res) {
-  var id = peopleSequence();
-  var person = {
-    id: id,
-    name: req.param('name')
-  };
-  people[id] = person;
-  res.json({ person: person });
+  var name = req.param('name');
+  Person.forge({
+    name: name 
+  })
+  .save()
+  .then(function() { console.log('Saved person: ' + name)})
+  .done();
 });
 
 app.put('/api/people/:id', function(req, res) {
