@@ -3,6 +3,7 @@ var _ = require('lodash');
 var express = require('express');
 var knexConfig = require('./knexfile.js')[env];
 var knex = require('knex')(knexConfig);
+var bluebird = require('bluebird'), Promise = bluebird;
 var bookshelf = require('bookshelf')(knex);
 
 var app = express();
@@ -25,10 +26,10 @@ app.get('/', function(req, res) {
 app.get('/api/people', function(req, res) {
   Person.fetchAll()
   .then(function(fetchedPeople){
-    var peopleObj = {
-      people: _.object(_.pluck(fetchedPeople.toJSON(), 'id'), fetchedPeople.toJSON())
-    };
-    res.json(peopleObj);
+    var people = fetchedPeople.toJSON().map(function(person) {
+      return _.omit(person, 'id');
+    });
+    res.json({ people: people });
   })
   .done();
 });
@@ -44,8 +45,10 @@ app.post('/api/people', function(req, res) {
 });
 
 app.put('/api/people/:id', function(req, res) {
-  Person.where({ id: req.params.id } )
-  .fetch()
+  Promise.resolve()
+  .then(function(arg) {
+    return Person.where({ id: req.params.id } ).fetch();
+  })
   .then(function(person) {
     return person.save({ name: req.param('name') }, { patch: true });
   })
