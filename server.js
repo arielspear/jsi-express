@@ -23,7 +23,13 @@ app.get('/', function(req, res) {
 });
 
 app.get('/api/people', function(req, res) {
-  res.json({ people: _.values(people) });
+  Person.fetchAll()
+  .then(function(fetchedPeople){
+    var fetchedPluckedPeople = 
+      _.object(_.pluck(fetchedPeople.toJSON(), 'id'), fetchedPeople.toJSON());
+    res.json(fetchedPluckedPeople);
+  })
+  .done();
 });
 
 app.post('/api/people', function(req, res) {
@@ -32,7 +38,7 @@ app.post('/api/people', function(req, res) {
     name: name 
   })
   .save()
-  .then(function() { console.log('Saved person: ' + name)})
+  .then(function() { console.log('Saved person: ' + name);})
   .done();
 });
 

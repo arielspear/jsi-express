@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Whitney Young",
+  "author": "Whitney Young, Adam Horak, Ariel Spear",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^2.1.3",
