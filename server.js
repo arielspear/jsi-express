@@ -25,9 +25,10 @@ app.get('/', function(req, res) {
 app.get('/api/people', function(req, res) {
   Person.fetchAll()
   .then(function(fetchedPeople){
-    var fetchedPluckedPeople = 
-      _.object(_.pluck(fetchedPeople.toJSON(), 'id'), fetchedPeople.toJSON());
-    res.json(fetchedPluckedPeople);
+    var peopleObj = {
+      people: _.object(_.pluck(fetchedPeople.toJSON(), 'id'), fetchedPeople.toJSON())
+    };
+    res.json(peopleObj);
   })
   .done();
 });
