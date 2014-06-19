@@ -26,10 +26,7 @@ app.get('/', function(req, res) {
 app.get('/api/people', function(req, res) {
   Person.fetchAll()
   .then(function(fetchedPeople){
-    var people = fetchedPeople.toJSON().map(function(person) {
-      return _.omit(person, 'id');
-    });
-    res.json({ people: people });
+    res.json({ people: fetchedPeople.toJSON() });
   })
   .done();
 });
@@ -62,9 +59,15 @@ app.put('/api/people/:id', function(req, res) {
 });
 
 app.delete('/api/people/:id', function(req, res) {
-  var deleted = !!people[req.params.id];
-  delete people[req.params.id];
-  res.json({ status: deleted ? 'deleted' : 'ok' });
+  console.log('DELETING');
+  Person.forge({
+    id: req.params.id
+  })
+  .destroy()
+  .then(function(){
+    res.json({ status: 'deleted'});
+  })
+  .done();
 });
 
 var server = app.listen(process.env.PORT || 3000, function() {
