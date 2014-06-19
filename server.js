@@ -17,8 +17,6 @@ var Person = bookshelf.Model.extend({
   tableName: 'people'
 });
 
-var people = {};
-
 app.get('/', function(req, res) {
   res.redirect('/home/');
 });
@@ -32,13 +30,11 @@ app.get('/api/people', function(req, res) {
 });
 
 app.post('/api/people', function(req, res) {
-  var name = req.param('name');
   Person.forge({
-    name: name 
+    name: req.param('name') 
   })
   .save()
   .then(function(person) { 
-    console.log('Saved person: ' + name);
     res.json({ person: person });
   })
   .done();
@@ -46,7 +42,7 @@ app.post('/api/people', function(req, res) {
 
 app.put('/api/people/:id', function(req, res) {
   Promise.resolve()
-  .then(function(arg) {
+  .then(function() {
     return Person.where({ id: req.params.id } ).fetch();
   })
   .then(function(person) {
@@ -59,13 +55,12 @@ app.put('/api/people/:id', function(req, res) {
 });
 
 app.delete('/api/people/:id', function(req, res) {
-  console.log('DELETING');
   Person.forge({
     id: req.params.id
   })
   .destroy()
   .then(function(){
-    res.json({ status: 'deleted'});
+    res.json({ status: 'deleted' });
   })
   .done();
 });
